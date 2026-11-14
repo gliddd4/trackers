@@ -1,0 +1,12 @@
+import fs from 'fs';
+const m = new Function('AsyncStorage', fs.readFileSync(new URL('./modules/trackers.js', import.meta.url), 'utf8'))({});
+const eq = (a, b, n) => console.log(a === b ? 'ok  ' : 'FAIL', n, a);
+eq(await m.resolveLinks(['https://pillows.su/f/47bf0495be0f1af721cfb718834c48f3']), 'https://api.pillows.su/api/download/47bf0495be0f1af721cfb718834c48f3', 'pillows');
+eq(await m.resolveLinks(['https://pillowcase.su/f/abc123']), 'https://api.pillows.su/api/download/abc123', 'pillowcase');
+eq(await m.resolveLinks(['https://pixeldrain.com/u/AbC123']), 'https://fuck-unvaulted.artistgrid.cx/AbC123', 'pixeldrain');
+eq(await m.resolveLinks(['https://drive.google.com/file/d/XYZ_-1/view']), 'https://fuck-unvaulted.artistgrid.cx/gd/XYZ_-1', 'drive');
+eq(await m.resolveLinks(['https://soundcloud.com/a/b?x=1']), 'https://sc.monochrome.tf/_/restream/a/b', 'soundcloud');
+eq(await m.resolveLinks(['https://youtu.be/abc']), null, 'youtube');
+eq(await m.resolveLinks(['https://youtu.be/abc', 'https://pixeldrain.com/d/Q1']), 'https://fuck-unvaulted.artistgrid.cx/Q1', 'skip to next');
+const csv = await (await fetch(m.artistsCSVURL)).text();
+console.log('csv rows', csv.split('\n').length);
